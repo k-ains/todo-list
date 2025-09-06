@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Tasks — DCISM To‑Do</title>
+  <link rel="stylesheet" href="styles.css" />
+
+<!-- Make sure the scripts are in this order and use defer -->
+<script src="utils.js" defer></script>
+<script src="tasks.js" defer></script>
+</head>
+<body>
+  <div id="app" class="app">
+    <header class="header">
+      <div>
+        <div class="hello">Good day, <span id="hello-name">User</span> ✨<small id="hello-time"></small></div>
+      </div>
+      <div class="userbox" style="gap:10px;align-items:center">
+        <div class="pill" id="user-email">loading…</div>
+        <button id="logout" class="logout">⇦ Logout</button>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="panel">
+        <div class="section-title">
+          <h3>New Task</h3>
+          <div class="tabs">
+            <button class="active" id="tab-active">Active</button>
+            <button id="tab-inactive">Inactive</button>
+          </div>
+        </div>
+
+        <form id="form-add" class="task-form">
+  <input class="input" id="new-name" placeholder="Task title (e.g., Final Exam)" required />
+  <input class="input" id="new-desc" placeholder="Task description" />
+  <input class="input" id="new-due" type="date" aria-label="Due date" />
+  <button class="btn" type="submit">Add</button>
+</form>
+
+
+        <div id="list" class="tasks" aria-live="polite"></div>
+      </section>
+
+     <section class="sidecards">
+  <div class="metrics">
+    <div class="metric widget">
+      <div id="stat-done" class="num">0</div>
+      <div class="titles">
+        <div class="label">Tasks Completed</div>
+        <!-- was: <div id="titles-done" class="lines">—</div> -->
+        <ul id="titles-done" class="lines list"></ul>
+      </div>
+    </div>
+
+    <div class="metric widget">
+      <div id="stat-todo" class="num">0</div>
+      <div class="titles">
+        <div class="label">Tasks To Do</div>
+        <!-- was: <div id="titles-todo" class="lines">—</div> -->
+        <ul id="titles-todo" class="lines list"></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+    </main>
+  </div>
+
+  <!-- Detail Drawer -->
+ <aside id="drawer" class="drawer" aria-hidden="true">
+  <header>
+    <div class="hint" id="drawer-breadcrumb">Home / Today</div>
+    <button id="drawer-close" class="icon-btn">✖</button>
+  </header>
+  <main>
+    <div class="field">
+      <label for="d-title">Title</label>
+      <input id="d-title" class="input" placeholder="Task title" />
+    </div>
+
+    <div class="field">
+      <label for="d-category">Category</label>
+      <input id="d-category" class="input taglike" list="cats" placeholder="e.g., Personal, School, Work" />
+      <datalist id="cats"></datalist>
+    </div>
+
+    <div class="field">
+      <label for="d-due">Due date</label>
+      <input id="d-due" class="input" type="date" />
+    </div>
+
+    <div class="field">
+      <label for="d-note">Write a note…</label>
+      <textarea id="d-note" rows="6" class="input" placeholder="Notes, links, etc."></textarea>
+    </div>
+  </main>
+  <footer>
+    <button id="btn-delete" class="icon-btn danger" style="flex:1">🗑️ Delete</button>
+    <button id="btn-save" class="btn" style="flex:1">Save</button>
+  </footer>
+</aside>
+
+
+  <!-- Task template -->
+  <template id="task-tpl">
+  <article class="task">
+    <div class="check" role="button" title="Toggle status">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    </div>
+    <div class="task-body">
+      <div class="top">
+        <div class="name"></div>
+        <div class="chips">
+          <span class="chip due" hidden></span>
+          <span class="chip cat" hidden></span>
+        </div>
+      </div>
+      <div class="desc hint"></div>
+    </div>
+    <div class="actions">
+      <button class="icon-btn open">➤</button>
+    </div>
+  </article>
+</template>
+
+</body>
+</html>

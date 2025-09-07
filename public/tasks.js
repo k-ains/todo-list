@@ -389,9 +389,9 @@ async function saveFromDrawer(){
     
     try {
       const promises = taskIds.map(id => 
-        apiSend('POST', '/updateItem_action.php', { 
-          item_id: id, 
-          is_done: 1 
+        apiSend('PUT', '/statusItem_action.php', { 
+          status: 'inactive', 
+          item_id: id 
         })
       );
       

@@ -1348,16 +1348,18 @@ body {
   }
   
   .hello {
-    font-size: 16px !important;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    max-width: 180px;
+    font-size: 18px !important;
+    overflow: visible !important;
+    white-space: normal !important;
+    text-overflow: unset !important;
+    max-width: none !important;
+    line-height: 1.2 !important;
   }
   
   .hello small {
-    font-size: 11px !important;
-    display: none; /* Hide on very small screens */
+    font-size: 12px !important;
+    display: block !important;
+    margin-top: 2px !important;
   }
   
   .userbox {
@@ -1426,12 +1428,12 @@ body {
   }
   
   .task-form .btn {
-    min-height: 48px !important;
+    min-height: 40px !important;
     width: 100% !important;
-    font-size: 16px !important;
-    padding: 14px 16px !important;
-    border-radius: 8px !important;
-    font-weight: 600 !important;
+    font-size: 14px !important;
+    padding: 10px 16px !important;
+    border-radius: 6px !important;
+    font-weight: 500 !important;
     touch-action: manipulation !important;
     -webkit-tap-highlight-color: transparent !important;
     margin-top: 8px !important;
@@ -1949,6 +1951,9 @@ body {
   .metric.widget .num { font-size: 24px !important; }
   .task { padding: 12px !important; gap: 12px !important; }
   .hello { font-size: 16px !important; }
-  .hello small { display: none !important; }
+  .hello small { 
+    display: block !important; 
+    font-size: 11px !important;
+  }
 }
 

@@ -37,23 +37,6 @@ const fmtDate = (s) => s ? new Date(s + 'T00:00:00').toLocaleDateString(undefine
     const arr = state.items[state.currentTab] || [];
     
     console.log(`Rendering ${state.currentTab} tab with ${arr.length} items`);
-    
-    // Add debug indicator
-    const debugEl = document.createElement('div');
-    debugEl.style.cssText = 'position:fixed;top:70px;right:10px;background:red;color:white;padding:5px;z-index:9999;border-radius:4px;font-size:12px;';
-    debugEl.textContent = `Tab: ${state.currentTab} (${arr.length} items)`;
-    debugEl.id = 'debug-tab-indicator';
-    
-    // Remove existing debug indicator
-    const existing = document.getElementById('debug-tab-indicator');
-    if (existing) existing.remove();
-    document.body.appendChild(debugEl);
-    
-    // Remove debug indicator after 3 seconds
-    setTimeout(() => {
-      const el = document.getElementById('debug-tab-indicator');
-      if (el) el.remove();
-    }, 3000);
 
     const tpl = document.getElementById('task-tpl');
     for (const it of arr) {
@@ -229,87 +212,50 @@ async function saveFromDrawer(){
 
       }
 
-      // Tabs - Complete rewrite for mobile compatibility
+      // Tabs - Simplified approach for mobile compatibility
       const tabA = document.getElementById('tab-active');
       const tabI = document.getElementById('tab-inactive');
       
-      function setActiveTab(newTab) {
-        console.log('Setting active tab to:', newTab);
+      function switchToTab(newTab) {
+        console.log('Switching to tab:', newTab);
         
         // Update state
         state.currentTab = newTab;
         
         // Update visual state
-        if (tabA && tabI) {
-          tabA.classList.remove('active');
-          tabI.classList.remove('active');
-          
-          if (newTab === 'active') {
-            tabA.classList.add('active');
-          } else {
-            tabI.classList.add('active');
-          }
+        document.querySelectorAll('.tabs button').forEach(btn => btn.classList.remove('active'));
+        
+        if (newTab === 'active') {
+          tabA?.classList.add('active');
+        } else {
+          tabI?.classList.add('active');
         }
         
-        // Force re-render
-        setTimeout(() => {
-          renderList();
-          console.log('Tab switched to:', state.currentTab);
-        }, 10);
-        
-        // Haptic feedback
-        if (navigator.vibrate) navigator.vibrate(30);
+        // Re-render list
+        renderList();
       }
       
-      // Remove any existing event listeners by cloning elements
+      // Add event listeners with simple approach
       if (tabA) {
-        const newTabA = tabA.cloneNode(true);
-        tabA.parentNode.replaceChild(newTabA, tabA);
-        
-        // Add all event types for maximum compatibility
-        newTabA.addEventListener('click', (e) => {
+        tabA.onclick = (e) => {
           e.preventDefault();
-          e.stopPropagation();
-          console.log('Active tab clicked');
-          setActiveTab('active');
-        }, { passive: false });
-        
-        newTabA.addEventListener('touchstart', (e) => {
+          switchToTab('active');
+        };
+        tabA.ontouchend = (e) => {
           e.preventDefault();
-          e.stopPropagation();
-          console.log('Active tab touched');
-          setActiveTab('active');
-        }, { passive: false });
-        
-        newTabA.addEventListener('touchend', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-        }, { passive: false });
+          switchToTab('active');
+        };
       }
       
       if (tabI) {
-        const newTabI = tabI.cloneNode(true);
-        tabI.parentNode.replaceChild(newTabI, tabI);
-        
-        // Add all event types for maximum compatibility
-        newTabI.addEventListener('click', (e) => {
+        tabI.onclick = (e) => {
           e.preventDefault();
-          e.stopPropagation();
-          console.log('Completed tab clicked');
-          setActiveTab('inactive');
-        }, { passive: false });
-        
-        newTabI.addEventListener('touchstart', (e) => {
+          switchToTab('inactive');
+        };
+        tabI.ontouchend = (e) => {
           e.preventDefault();
-          e.stopPropagation();
-          console.log('Completed tab touched');
-          setActiveTab('inactive');
-        }, { passive: false });
-        
-        newTabI.addEventListener('touchend', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-        }, { passive: false });
+          switchToTab('inactive');
+        };
       }
 
       // Drawer buttons
@@ -439,38 +385,5 @@ if (state.items.active.length === 0 && state.items.inactive.length === 0) {
   console.log('No tasks found, adding test data...');
   setTimeout(() => window.App.addTestData(), 1000);
 }
-
-// Add debug function for mobile testing
-window.App.debugTabs = function() {
-  console.log('=== TAB DEBUG INFO ===');
-  console.log('Current tab:', state.currentTab);
-  console.log('Active tasks:', state.items.active.length);
-  console.log('Completed tasks:', state.items.inactive.length);
-  
-  const tabA = document.getElementById('tab-active');
-  const tabI = document.getElementById('tab-inactive');
-  console.log('Active tab element:', tabA);
-  console.log('Active tab has active class:', tabA?.classList.contains('active'));
-  console.log('Completed tab element:', tabI);
-  console.log('Completed tab has active class:', tabI?.classList.contains('active'));
-  
-  const listEl = document.getElementById('list');
-  console.log('List element children count:', listEl?.children.length);
-  
-  // Show visual indicator
-  const indicator = document.createElement('div');
-  indicator.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:green;color:white;padding:20px;z-index:10000;border-radius:8px;font-size:16px;';
-  indicator.innerHTML = `
-    <div>Current Tab: ${state.currentTab}</div>
-    <div>Active: ${state.items.active.length} tasks</div>
-    <div>Completed: ${state.items.inactive.length} tasks</div>
-    <button onclick="this.parentElement.remove()">Close</button>
-  `;
-  document.body.appendChild(indicator);
-  
-  setTimeout(() => {
-    if (indicator.parentElement) indicator.remove();
-  }, 5000);
-};
 
 })();

@@ -271,13 +271,13 @@ body {
 
 /* Ensure main content is not affected by overlay unless sidebar is open */
 @media (max-width: 991px) {
-  body:not(.menu-open) .main {
-    z-index: 950; /* Higher than overlay when menu is closed */
+  .main {
+    z-index: 950; /* Higher than overlay */
     pointer-events: all;
   }
   
-  body.menu-open .main {
-    z-index: 1; /* Lower when menu is open */
+  .sidebar-overlay.active + * .main {
+    z-index: 1; /* Lower when overlay is active */
   }
 }
 
@@ -523,6 +523,8 @@ body {
   height: calc(100vh - 80px - 64px); /* Full height minus header and main padding */
   max-height: calc(100vh - 80px - 64px);
   overflow: hidden;
+  position: relative;
+  z-index: 2; /* Ensure panel is above overlay when closed */
 }
 
 .section-title {
@@ -1413,6 +1415,19 @@ body {
   
   .task {
     min-height: 44px;
+  }
+  
+  /* Ensure form is accessible on mobile */
+  .task-form {
+    position: relative;
+    z-index: 10;
+  }
+  
+  .task-form .btn {
+    min-height: 48px;
+    width: 100%;
+    font-size: 16px;
+    font-weight: 600;
   }
 }
 

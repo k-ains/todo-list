@@ -297,6 +297,7 @@ async function saveFromDrawer(){
       // Bulk Actions Controls Bar
       document.getElementById('select-all')?.addEventListener('click', selectAllTasks);
       document.getElementById('deselect-all')?.addEventListener('click', deselectAllTasks);
+      document.getElementById('bulk-complete')?.addEventListener('click', bulkCompleteTasks);
       document.getElementById('bulk-delete')?.addEventListener('click', bulkDeleteTasks);
 
       fetchItems().catch(err => { console.error('Initial fetch failed:', err); toast('Failed to load tasks','error'); });
@@ -378,6 +379,36 @@ async function saveFromDrawer(){
       taskElement?.classList.remove('selected');
     });
     updateBulkActions();
+  }
+  
+  async function bulkCompleteTasks() {
+    const checkedBoxes = document.querySelectorAll('.task-checkbox:checked');
+    const taskIds = Array.from(checkedBoxes).map(cb => cb.getAttribute('data-task-id'));
+    
+    if (taskIds.length === 0) {
+      toast('Please select tasks to complete', 'warning');
+      return;
+    }
+    
+    const confirmed = confirm(`Are you sure you want to mark ${taskIds.length} task(s) as completed?`);
+    if (!confirmed) return;
+    
+    try {
+      const promises = taskIds.map(id => 
+        apiSend('POST', '/updateItem_action.php', { 
+          item_id: id, 
+          is_done: 1 
+        })
+      );
+      
+      await Promise.all(promises);
+      toast(`Completed ${taskIds.length} task(s)`);
+      await fetchItems();
+      exitBulkSelectionMode(); // Exit bulk mode after completion
+    } catch (e) {
+      console.error('Bulk complete failed:', e);
+      toast('Failed to complete some tasks', 'error');
+    }
   }
   
   async function bulkDeleteTasks() {

@@ -684,6 +684,18 @@ body {
   transform: translateY(-1px);
 }
 
+.btn-pastel-green {
+  background: #dcfce7;
+  color: #16a34a;
+  border-color: #bbf7d0;
+}
+
+.btn-pastel-green:hover {
+  background: #bbf7d0;
+  border-color: #86efac;
+  transform: translateY(-1px);
+}
+
 @keyframes slideDown {
   from {
     opacity: 0;

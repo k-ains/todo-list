@@ -354,36 +354,4 @@ window.App.collapseList = function(type) {
   renderCounts(); // This will reset to the normal 3-item view
 };
 
-// Add some test data for demonstration
-window.App.addTestData = function() {
-  console.log('Adding test data...');
-  
-  // Add test active tasks
-  state.items.active = [
-    { item_id: 1, item_name: 'Complete mobile responsive design', item_description: 'Fix tab switching and add see more functionality', status: 'active' },
-    { item_id: 2, item_name: 'Review dark mode implementation', item_description: 'Test dark mode on all devices', status: 'active' },
-    { item_id: 3, item_name: 'Add touch optimizations', item_description: 'Improve mobile touch interactions', status: 'active' },
-    { item_id: 4, item_name: 'Test cross-browser compatibility', item_description: 'Check Safari, Chrome, Firefox', status: 'active' },
-    { item_id: 5, item_name: 'Optimize performance', item_description: 'Reduce bundle size and load time', status: 'active' }
-  ];
-  
-  // Add test completed tasks
-  state.items.inactive = [
-    { item_id: 6, item_name: 'Set up project structure', item_description: 'Create HTML, CSS, JS files', status: 'inactive' },
-    { item_id: 7, item_name: 'Implement basic layout', item_description: 'Add header, sidebar, main content', status: 'inactive' },
-    { item_id: 8, item_name: 'Add CSS Grid layout', item_description: 'Responsive grid system', status: 'inactive' },
-    { item_id: 9, item_name: 'Create color scheme', item_description: 'Define CSS custom properties', status: 'inactive' }
-  ];
-  
-  renderCounts();
-  renderList();
-  console.log('Test data added!');
-};
-
-// Auto-add test data if no tasks exist
-if (state.items.active.length === 0 && state.items.inactive.length === 0) {
-  console.log('No tasks found, adding test data...');
-  setTimeout(() => window.App.addTestData(), 1000);
-}
-
 })();

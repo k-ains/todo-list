@@ -295,7 +295,6 @@ async function saveFromDrawer(){
       document.getElementById('logout')?.addEventListener('click', logout);
 
       // Bulk Actions Controls Bar
-      document.getElementById('exit-bulk')?.addEventListener('click', exitBulkSelectionMode);
       document.getElementById('select-all')?.addEventListener('click', selectAllTasks);
       document.getElementById('deselect-all')?.addEventListener('click', deselectAllTasks);
       document.getElementById('bulk-delete')?.addEventListener('click', bulkDeleteTasks);
@@ -325,13 +324,11 @@ async function saveFromDrawer(){
     const bulkControls = document.getElementById('bulk-controls');
     if (bulkControls) bulkControls.style.display = 'flex';
     
-    // Show checkboxes and menu buttons for all tasks
+    // Show checkboxes for all tasks
     document.querySelectorAll('.task').forEach(task => {
       task.classList.add('selection-mode');
       const taskSelect = task.querySelector('.task-select');
-      const menuBtn = task.querySelector('.menu-btn');
       if (taskSelect) taskSelect.style.display = 'flex';
-      if (menuBtn) menuBtn.style.display = 'inline-block';
     });
     
     updateBulkActions();
@@ -344,13 +341,11 @@ async function saveFromDrawer(){
     const bulkControls = document.getElementById('bulk-controls');
     if (bulkControls) bulkControls.style.display = 'none';
     
-    // Hide checkboxes and menu buttons, clear selections
+    // Hide checkboxes, clear selections
     document.querySelectorAll('.task').forEach(task => {
       task.classList.remove('selection-mode', 'selected');
       const taskSelect = task.querySelector('.task-select');
-      const menuBtn = task.querySelector('.menu-btn');
       if (taskSelect) taskSelect.style.display = 'none';
-      if (menuBtn) menuBtn.style.display = 'none';
       const checkbox = task.querySelector('.task-checkbox');
       if (checkbox) checkbox.checked = false;
     });

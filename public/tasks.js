@@ -190,12 +190,6 @@ async function saveFromDrawer(){
 
       renderHeader();
 
-      // Test if elements exist
-      console.log('Testing element existence:');
-      console.log('inbox-count exists:', !!document.getElementById('inbox-count'));
-      console.log('stat-todo exists:', !!document.getElementById('stat-todo'));
-      console.log('stat-done exists:', !!document.getElementById('stat-done'));
-
       // Add form
       const form = document.getElementById('form-add');
       if (form) {

@@ -547,6 +547,8 @@ body {
   background: var(--bg-primary);
   color: var(--text-primary);
   box-shadow: var(--shadow-sm);
+  font-weight: 600;
+  border: 2px solid var(--color-primary);
 }
 
 /* ===== TASK FORM ===== */
@@ -1333,6 +1335,15 @@ body {
   .tabs button {
     padding: 12px 20px;
     min-height: 44px;
+    /* Better touch feedback */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
+    transition: all 0.15s ease;
+  }
+  
+  .tabs button:active {
+    transform: scale(0.98);
+    background-color: var(--color-primary) !important;
   }
   
   .nav button {

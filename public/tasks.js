@@ -35,6 +35,8 @@ const fmtDate = (s) => s ? new Date(s + 'T00:00:00').toLocaleDateString(undefine
     const listEl = document.getElementById('list'); if (!listEl) return;
     listEl.innerHTML = '';
     const arr = state.items[state.currentTab] || [];
+    
+    console.log(`Rendering ${state.currentTab} tab with ${arr.length} items`);
 
     const tpl = document.getElementById('task-tpl');
     for (const it of arr) {
@@ -213,8 +215,42 @@ async function saveFromDrawer(){
       // Tabs
       const tabA = document.getElementById('tab-active');
       const tabI = document.getElementById('tab-inactive');
-      if (tabA) tabA.addEventListener('click', () => { state.currentTab='active'; tabA.classList.add('active'); tabI?.classList.remove('active'); renderList(); });
-      if (tabI) tabI.addEventListener('click', () => { state.currentTab='inactive'; tabI.classList.add('active'); tabA?.classList.remove('active'); renderList(); });
+      
+      function switchToActive() {
+        console.log('Switching to Active tab');
+        state.currentTab='active'; 
+        tabA?.classList.add('active'); 
+        tabI?.classList.remove('active'); 
+        renderList();
+        // Add haptic feedback on mobile
+        if (navigator.vibrate) navigator.vibrate(50);
+      }
+      
+      function switchToInactive() {
+        console.log('Switching to Completed tab');
+        state.currentTab='inactive'; 
+        tabI?.classList.add('active'); 
+        tabA?.classList.remove('active'); 
+        renderList();
+        // Add haptic feedback on mobile
+        if (navigator.vibrate) navigator.vibrate(50);
+      }
+      
+      if (tabA) {
+        tabA.addEventListener('click', switchToActive);
+        tabA.addEventListener('touchend', (e) => {
+          e.preventDefault();
+          switchToActive();
+        });
+      }
+      
+      if (tabI) {
+        tabI.addEventListener('click', switchToInactive);
+        tabI.addEventListener('touchend', (e) => {
+          e.preventDefault();
+          switchToInactive();
+        });
+      }
 
       // Drawer buttons
       document.getElementById('drawer-close')?.addEventListener('click', closeDrawer);

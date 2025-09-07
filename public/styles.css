@@ -43,6 +43,151 @@
   --shadow-lg: 0 10px 15px rgba(0,0,0,0.3);
 }
 
+/* Ensure dark mode styles are applied properly */
+[data-theme="dark"] body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .panel {
+  background: var(--bg-secondary);
+  border-color: var(--border-light);
+}
+
+[data-theme="dark"] .metric.widget {
+  background: var(--bg-secondary);
+  border-color: var(--border-light);
+}
+
+[data-theme="dark"] .task {
+  background: var(--bg-secondary);
+  border-color: var(--border-light);
+}
+
+[data-theme="dark"] .input,
+[data-theme="dark"] textarea {
+  background: var(--bg-tertiary);
+  border-color: var(--border-medium);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .input:focus,
+[data-theme="dark"] textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.1);
+}
+
+[data-theme="dark"] .sidebar {
+  background: var(--bg-secondary);
+  border-color: var(--border-light);
+}
+
+[data-theme="dark"] .main {
+  background: var(--bg-primary);
+}
+
+[data-theme="dark"] .header {
+  background: var(--bg-primary);
+  border-color: var(--border-light);
+}
+
+[data-theme="dark"] .tabs {
+  background: var(--bg-tertiary);
+  border-color: var(--border-medium);
+}
+
+[data-theme="dark"] .tabs button.active {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .btn {
+  background: var(--accent);
+  color: var(--bg-primary);
+}
+
+[data-theme="dark"] .nav button {
+  color: var(--text-secondary);
+  background: transparent;
+}
+
+[data-theme="dark"] .nav button:hover {
+  background: var(--bg-tertiary);
+}
+
+[data-theme="dark"] .nav button.active {
+  background: var(--accent);
+  color: var(--bg-primary);
+}
+
+[data-theme="dark"] .pill {
+  background: var(--bg-tertiary);
+  border-color: var(--border-medium);
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .check {
+  border-color: var(--border-dark);
+}
+
+[data-theme="dark"] .check:hover {
+  border-color: var(--accent);
+}
+
+[data-theme="dark"] .check.done {
+  background: var(--success);
+  border-color: var(--success);
+}
+
+[data-theme="dark"] .drawer {
+  background: var(--bg-primary);
+  border-color: var(--border-light);
+}
+
+[data-theme="dark"] .drawer header,
+[data-theme="dark"] .drawer footer {
+  border-color: var(--border-light);
+}
+
+[data-theme="dark"] .chip {
+  background: var(--bg-tertiary);
+  border-color: var(--border-medium);
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .chip.due {
+  background: rgba(255, 152, 0, 0.15);
+  border-color: var(--warning);
+  color: var(--warning);
+}
+
+[data-theme="dark"] .chip.cat {
+  background: rgba(76, 175, 80, 0.15);
+  border-color: var(--success);
+  color: var(--success);
+}
+
+[data-theme="dark"] .icon-btn {
+  background: var(--bg-tertiary);
+  border-color: var(--border-medium);
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .icon-btn:hover {
+  background: var(--bg-secondary);
+  border-color: var(--border-dark);
+}
+
+[data-theme="dark"] .icon-btn.danger {
+  border-color: rgba(244, 67, 54, 0.3);
+  background: rgba(244, 67, 54, 0.05);
+  color: var(--danger);
+}
+
+[data-theme="dark"] .icon-btn.danger:hover {
+  background: rgba(244, 67, 54, 0.1);
+}
+
 * {
   box-sizing: border-box;
 }

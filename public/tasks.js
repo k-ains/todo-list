@@ -229,15 +229,16 @@ async function saveFromDrawer(){
  function renderCounts(){
   const active = state.items.active.length;
   const inactive = state.items.inactive.length;
+  
+  console.log('Updating counts: active =', active, 'inactive =', inactive);
 
   // big numbers
-  const set = (id,val)=>{ const n=document.getElementById(id); if(n){ n.textContent=String(val); n.animate?.([{opacity:.6,transform:'scale(.98)'},{opacity:1,transform:'scale(1)'}],{duration:180,easing:'ease-out'});} };
+  const set = (id,val)=>{ const n=document.getElementById(id); if(n){ n.textContent=String(val); n.animate?.([{opacity:.6,transform:'scale(.98)'},{opacity:1,transform:'scale(1)'}],{duration:180,easing:'ease-out'});} else { console.log('Element not found:', id); } };
   set('stat-done', inactive);
   set('stat-todo', active);
   
-  // sidebar badges
+  // sidebar badges (only inbox since we removed other nav items)
   set('inbox-count', active);
-  set('completed-count', inactive);
 
   // helper to escape HTML
   const esc = (s)=>String(s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;', "'":'&#39;'}[m]));

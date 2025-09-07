@@ -1032,27 +1032,20 @@ body {
   border-radius: var(--radius-lg);
   padding: 20px;
   box-shadow: var(--shadow-sm);
-  display: flex;
-  align-items: center;
-  gap: 16px;
 }
 
 .metric.widget .num {
   font-size: 32px;
   font-weight: 700;
   color: var(--text-primary);
-  flex-shrink: 0;
-}
-
-.metric.widget .titles {
-  flex: 1;
+  margin-bottom: 8px;
 }
 
 .metric.widget .label {
   font-size: 14px;
   font-weight: 500;
   color: var(--text-secondary);
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .metric.widget .list {
@@ -1066,6 +1059,9 @@ body {
   font-size: 13px;
   color: var(--text-secondary);
   border-bottom: 1px solid var(--border-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .metric.widget .list li:last-child {
@@ -1468,18 +1464,10 @@ body {
   
   .metric.widget {
     padding: 16px !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
   }
   
   .metric.widget .num {
     font-size: 24px !important;
-    flex-shrink: 0 !important;
-  }
-  
-  .metric.widget .titles {
-    flex: 1 !important;
   }
   
   .task {
@@ -1960,11 +1948,7 @@ body {
 
 /* Tiny phones: tighten spacing a bit more */
 @media (max-width: 575.98px) {
-  .metric.widget .num { font-size: 20px !important; }
-  .metric.widget { 
-    padding: 12px !important; 
-    gap: 10px !important;
-  }
+  .metric.widget .num { font-size: 24px !important; }
   .task { padding: 12px !important; gap: 12px !important; }
   .hello { font-size: 16px !important; }
   .hello small { 

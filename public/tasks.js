@@ -160,6 +160,12 @@ async function saveFromDrawer(){
 
       renderHeader();
 
+      // Test if elements exist
+      console.log('Testing element existence:');
+      console.log('inbox-count exists:', !!document.getElementById('inbox-count'));
+      console.log('stat-todo exists:', !!document.getElementById('stat-todo'));
+      console.log('stat-done exists:', !!document.getElementById('stat-done'));
+
       // Add form
       const form = document.getElementById('form-add');
       if (form) {
@@ -233,7 +239,16 @@ async function saveFromDrawer(){
   console.log('Updating counts: active =', active, 'inactive =', inactive);
 
   // big numbers
-  const set = (id,val)=>{ const n=document.getElementById(id); if(n){ n.textContent=String(val); n.animate?.([{opacity:.6,transform:'scale(.98)'},{opacity:1,transform:'scale(1)'}],{duration:180,easing:'ease-out'});} else { console.log('Element not found:', id); } };
+  const set = (id,val)=>{ 
+    const n=document.getElementById(id); 
+    if(n){ 
+      console.log(`Updating ${id} to ${val}`);
+      n.textContent=String(val); 
+      n.animate?.([{opacity:.6,transform:'scale(.98)'},{opacity:1,transform:'scale(1)'}],{duration:180,easing:'ease-out'});
+    } else { 
+      console.log('Element not found:', id); 
+    } 
+  };
   set('stat-done', inactive);
   set('stat-todo', active);
   

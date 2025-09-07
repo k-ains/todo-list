@@ -45,15 +45,32 @@ const fmtDate = (s) => s ? new Date(s + 'T00:00:00').toLocaleDateString(undefine
       const openBtn = node.querySelector('.open');
       const name = node.querySelector('.name');
       const desc = node.querySelector('.desc');
+      const checkbox = node.querySelector('.task-checkbox');
+      const taskElement = node.querySelector('.task');
 
       if (state.currentTab === 'inactive' || it.status === 'inactive') check.classList.add('done');
       name.textContent = it.item_name;
       desc.textContent = it.item_description || badgeFor(it);
+      
+      // Set data attribute for task ID
+      taskElement.setAttribute('data-task-id', it.item_id);
+      checkbox.setAttribute('data-task-id', it.item_id);
+      
       const s = loadSched()[it.item_id] || {};
-const dueEl = node.querySelector('.chip.due');
-const catEl = node.querySelector('.chip.cat');
-if (s.due) { dueEl.textContent = fmtDate(s.due); dueEl.hidden = false; } else { dueEl.hidden = true; }
-if (s.category) { catEl.textContent = s.category; catEl.hidden = false; } else { catEl.hidden = true; }
+      const dueEl = node.querySelector('.chip.due');
+      const catEl = node.querySelector('.chip.cat');
+      if (s.due) { dueEl.textContent = fmtDate(s.due); dueEl.hidden = false; } else { dueEl.hidden = true; }
+      if (s.category) { catEl.textContent = s.category; catEl.hidden = false; } else { catEl.hidden = true; }
+
+      // Handle checkbox selection
+      checkbox.addEventListener('change', () => {
+        if (checkbox.checked) {
+          taskElement.classList.add('selected');
+        } else {
+          taskElement.classList.remove('selected');
+        }
+        updateBulkActions();
+      });
 
       // toggle status
       check.addEventListener('click', async () => {
@@ -266,12 +283,98 @@ async function saveFromDrawer(){
       // Logout
       document.getElementById('logout')?.addEventListener('click', logout);
 
+      // Bulk Actions
+      document.getElementById('select-all')?.addEventListener('click', selectAllTasks);
+      document.getElementById('deselect-all')?.addEventListener('click', deselectAllTasks);
+      document.getElementById('bulk-delete')?.addEventListener('click', bulkDeleteTasks);
+      document.getElementById('bulk-complete')?.addEventListener('click', bulkCompleteTasks);
+
       fetchItems().catch(err => { console.error('Initial fetch failed:', err); toast('Failed to load tasks','error'); });
     } catch (e) {
       console.error('Init error:', e);
       toast('Something went wrong in init','error');
     }
   });
+
+  // -------- Bulk Actions Functions --------
+  function updateBulkActions() {
+    const checkboxes = document.querySelectorAll('.task-checkbox');
+    const checkedBoxes = document.querySelectorAll('.task-checkbox:checked');
+    const bulkActions = document.getElementById('bulk-actions');
+    const selectedCount = document.getElementById('selected-count');
+    
+    if (checkedBoxes.length > 0) {
+      bulkActions.style.display = 'block';
+      selectedCount.textContent = `${checkedBoxes.length} selected`;
+    } else {
+      bulkActions.style.display = 'none';
+    }
+  }
+  
+  function selectAllTasks() {
+    const checkboxes = document.querySelectorAll('.task-checkbox');
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = true;
+      const taskElement = checkbox.closest('.task');
+      taskElement?.classList.add('selected');
+    });
+    updateBulkActions();
+  }
+  
+  function deselectAllTasks() {
+    const checkboxes = document.querySelectorAll('.task-checkbox');
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = false;
+      const taskElement = checkbox.closest('.task');
+      taskElement?.classList.remove('selected');
+    });
+    updateBulkActions();
+  }
+  
+  async function bulkDeleteTasks() {
+    const checkedBoxes = document.querySelectorAll('.task-checkbox:checked');
+    const taskIds = Array.from(checkedBoxes).map(cb => cb.getAttribute('data-task-id'));
+    
+    if (taskIds.length === 0) return;
+    
+    const confirmed = confirm(`Are you sure you want to delete ${taskIds.length} task(s)?`);
+    if (!confirmed) return;
+    
+    try {
+      const promises = taskIds.map(id => 
+        apiSend('DELETE', '/deleteItem_action.php', { item_id: id })
+      );
+      
+      await Promise.all(promises);
+      toast(`Deleted ${taskIds.length} task(s)`);
+      await fetchItems();
+      updateBulkActions();
+    } catch (e) {
+      console.error('Bulk delete failed:', e);
+      toast('Failed to delete some tasks', 'error');
+    }
+  }
+  
+  async function bulkCompleteTasks() {
+    const checkedBoxes = document.querySelectorAll('.task-checkbox:checked');
+    const taskIds = Array.from(checkedBoxes).map(cb => cb.getAttribute('data-task-id'));
+    
+    if (taskIds.length === 0) return;
+    
+    try {
+      const promises = taskIds.map(id => 
+        apiSend('PUT', '/statusItem_action.php', { status: 'inactive', item_id: id })
+      );
+      
+      await Promise.all(promises);
+      toast(`Completed ${taskIds.length} task(s)`);
+      await fetchItems();
+      updateBulkActions();
+    } catch (e) {
+      console.error('Bulk complete failed:', e);
+      toast('Failed to complete some tasks', 'error');
+    }
+  }
 
   // -------- Counts (big counters + badges) --------
  function renderCounts(){

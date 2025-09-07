@@ -67,6 +67,19 @@
           <button class="btn" type="submit">Add task</button>
         </form>
 
+        <!-- Bulk Actions -->
+        <div id="bulk-actions" class="bulk-actions" style="display: none;">
+          <div class="bulk-controls">
+            <span id="selected-count">0 selected</span>
+            <div class="bulk-buttons">
+              <button id="select-all" class="btn-secondary">Select All</button>
+              <button id="deselect-all" class="btn-secondary">Deselect All</button>
+              <button id="bulk-delete" class="btn-danger">Delete Selected</button>
+              <button id="bulk-complete" class="btn-success">Complete Selected</button>
+            </div>
+          </div>
+        </div>
+
         <div id="list" class="tasks" aria-live="polite"></div>
       </section>
 
@@ -130,6 +143,9 @@
   <!-- Task Template -->
   <template id="task-tpl">
     <article class="task">
+      <div class="task-select">
+        <input type="checkbox" class="task-checkbox" title="Select for bulk actions">
+      </div>
       <div class="check" role="button" title="Mark as complete">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="20 6 9 17 4 12"></polyline>

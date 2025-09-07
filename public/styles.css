@@ -584,6 +584,95 @@ body {
   margin-bottom: 24px;
 }
 
+/* ===== BULK ACTIONS ===== */
+.bulk-actions {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  animation: slideDown 0.3s ease;
+}
+
+.bulk-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.bulk-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-secondary {
+  all: unset;
+  cursor: pointer;
+  padding: 8px 12px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-dark);
+}
+
+.btn-danger {
+  all: unset;
+  cursor: pointer;
+  padding: 8px 12px;
+  background: #dc2626;
+  color: white;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+  background: #b91c1c;
+}
+
+.btn-success {
+  all: unset;
+  cursor: pointer;
+  padding: 8px 12px;
+  background: #16a34a;
+  color: white;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-success:hover {
+  background: #15803d;
+}
+
+#selected-count {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (max-width: 1024px) {
   .task-form {
     grid-template-columns: 1fr;
@@ -664,7 +753,7 @@ body {
 
 .task {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto auto 1fr auto;
   align-items: flex-start;
   gap: 16px;
   padding: 16px;
@@ -677,6 +766,24 @@ body {
 .task:hover {
   border-color: var(--border-medium);
   box-shadow: var(--shadow-sm);
+}
+
+.task.selected {
+  border-color: var(--color-primary);
+  background: rgba(139, 92, 246, 0.05);
+}
+
+.task-select {
+  display: flex;
+  align-items: center;
+  margin-top: 2px;
+}
+
+.task-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-primary);
+  cursor: pointer;
 }
 
 .check {
@@ -1286,6 +1393,24 @@ body {
   
   .task-form button {
     grid-column: 1 / -1 !important;
+  }
+  
+  /* Mobile bulk actions */
+  .bulk-controls {
+    flex-direction: column !important;
+    gap: 12px !important;
+    align-items: stretch !important;
+  }
+  
+  .bulk-buttons {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+  
+  .btn-secondary, .btn-danger, .btn-success {
+    min-height: 44px !important;
+    font-size: 14px !important;
   }
   
   .drawer {

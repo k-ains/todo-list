@@ -1348,6 +1348,10 @@ body {
   }
   
   .hello {
+    font-size: 16px !important;
+  }
+  
+  .hello #hello-name {
     display: none !important;
   }
   
@@ -1943,7 +1947,8 @@ body {
 @media (max-width: 575.98px) {
   .metric.widget .num { font-size: 24px !important; }
   .task { padding: 12px !important; gap: 12px !important; }
-  .hello { display: none !important; }
+  .hello { font-size: 14px !important; }
+  .hello #hello-name { display: none !important; }
   .hello small { display: none !important; }
 }
 

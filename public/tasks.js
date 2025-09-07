@@ -234,6 +234,10 @@ async function saveFromDrawer(){
   const set = (id,val)=>{ const n=document.getElementById(id); if(n){ n.textContent=String(val); n.animate?.([{opacity:.6,transform:'scale(.98)'},{opacity:1,transform:'scale(1)'}],{duration:180,easing:'ease-out'});} };
   set('stat-done', inactive);
   set('stat-todo', active);
+  
+  // sidebar badges
+  set('inbox-count', active);
+  set('completed-count', inactive);
 
   // helper to escape HTML
   const esc = (s)=>String(s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;', "'":'&#39;'}[m]));

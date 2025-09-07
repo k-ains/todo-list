@@ -73,10 +73,17 @@ const fmtDate = (s) => s ? new Date(s + 'T00:00:00').toLocaleDateString(undefine
         updateBulkActions();
       });
 
-      // Handle menu button click - show bulk actions popup
+      // Handle menu button click - toggle bulk selection mode
       menuBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        showBulkActionsPopup();
+        toggleBulkSelectionMode();
+      });
+
+      // Handle edit button click - open drawer for individual editing
+      const editBtn = node.querySelector('.open');
+      editBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openDrawer(it);
       });
 
       // toggle status
@@ -287,18 +294,11 @@ async function saveFromDrawer(){
       // Logout
       document.getElementById('logout')?.addEventListener('click', logout);
 
-      // Bulk Actions Popup
-      document.getElementById('close-bulk')?.addEventListener('click', hideBulkActionsPopup);
+      // Bulk Actions Controls Bar
+      document.getElementById('exit-bulk')?.addEventListener('click', exitBulkSelectionMode);
       document.getElementById('select-all')?.addEventListener('click', selectAllTasks);
       document.getElementById('deselect-all')?.addEventListener('click', deselectAllTasks);
       document.getElementById('bulk-delete')?.addEventListener('click', bulkDeleteTasks);
-      
-      // Close popup when clicking outside
-      document.getElementById('bulk-actions-popup')?.addEventListener('click', (e) => {
-        if (e.target.id === 'bulk-actions-popup') {
-          hideBulkActionsPopup();
-        }
-      });
 
       fetchItems().catch(err => { console.error('Initial fetch failed:', err); toast('Failed to load tasks','error'); });
     } catch (e) {
@@ -310,31 +310,47 @@ async function saveFromDrawer(){
   // -------- Bulk Actions Functions --------
   let isSelectionMode = false;
   
-  function showBulkActionsPopup() {
-    const popup = document.getElementById('bulk-actions-popup');
-    popup.style.display = 'flex';
-    
-    // Enable selection mode
+  function toggleBulkSelectionMode() {
+    if (isSelectionMode) {
+      exitBulkSelectionMode();
+    } else {
+      enterBulkSelectionMode();
+    }
+  }
+  
+  function enterBulkSelectionMode() {
     isSelectionMode = true;
+    
+    // Show bulk controls bar
+    const bulkControls = document.getElementById('bulk-controls');
+    if (bulkControls) bulkControls.style.display = 'flex';
+    
+    // Show checkboxes and menu buttons for all tasks
     document.querySelectorAll('.task').forEach(task => {
       task.classList.add('selection-mode');
       const taskSelect = task.querySelector('.task-select');
+      const menuBtn = task.querySelector('.menu-btn');
       if (taskSelect) taskSelect.style.display = 'flex';
+      if (menuBtn) menuBtn.style.display = 'inline-block';
     });
     
     updateBulkActions();
   }
   
-  function hideBulkActionsPopup() {
-    const popup = document.getElementById('bulk-actions-popup');
-    popup.style.display = 'none';
-    
-    // Disable selection mode and clear selections
+  function exitBulkSelectionMode() {
     isSelectionMode = false;
+    
+    // Hide bulk controls bar
+    const bulkControls = document.getElementById('bulk-controls');
+    if (bulkControls) bulkControls.style.display = 'none';
+    
+    // Hide checkboxes and menu buttons, clear selections
     document.querySelectorAll('.task').forEach(task => {
       task.classList.remove('selection-mode', 'selected');
       const taskSelect = task.querySelector('.task-select');
+      const menuBtn = task.querySelector('.menu-btn');
       if (taskSelect) taskSelect.style.display = 'none';
+      if (menuBtn) menuBtn.style.display = 'none';
       const checkbox = task.querySelector('.task-checkbox');
       if (checkbox) checkbox.checked = false;
     });
@@ -389,7 +405,7 @@ async function saveFromDrawer(){
       await Promise.all(promises);
       toast(`Deleted ${taskIds.length} task(s)`);
       await fetchItems();
-      hideBulkActionsPopup(); // Close popup after deletion
+      exitBulkSelectionMode(); // Exit bulk mode after deletion
     } catch (e) {
       console.error('Bulk delete failed:', e);
       toast('Failed to delete some tasks', 'error');

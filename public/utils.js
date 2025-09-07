@@ -98,6 +98,7 @@ function initMobileMenu() {
       sidebar.classList.remove('mobile-open');
       overlay.classList.remove('active');
       mobileMenuToggle.classList.remove('active');
+      body.classList.remove('menu-open');
       body.style.overflow = '';
       console.log('Menu closed');
     } else {
@@ -105,6 +106,7 @@ function initMobileMenu() {
       sidebar.classList.add('mobile-open');
       overlay.classList.add('active');
       mobileMenuToggle.classList.add('active');
+      body.classList.add('menu-open');
       body.style.overflow = 'hidden';
       console.log('Menu opened');
     }

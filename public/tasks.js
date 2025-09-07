@@ -229,55 +229,86 @@ async function saveFromDrawer(){
 
       }
 
-      // Tabs
+      // Tabs - Complete rewrite for mobile compatibility
       const tabA = document.getElementById('tab-active');
       const tabI = document.getElementById('tab-inactive');
       
-      function switchToActive() {
-        console.log('Switching to Active tab');
-        state.currentTab='active'; 
-        tabA?.classList.add('active'); 
-        tabI?.classList.remove('active'); 
-        renderList();
-        // Add haptic feedback on mobile
-        if (navigator.vibrate) navigator.vibrate(50);
-        // Force update the display
-        setTimeout(() => renderList(), 50);
+      function setActiveTab(newTab) {
+        console.log('Setting active tab to:', newTab);
+        
+        // Update state
+        state.currentTab = newTab;
+        
+        // Update visual state
+        if (tabA && tabI) {
+          tabA.classList.remove('active');
+          tabI.classList.remove('active');
+          
+          if (newTab === 'active') {
+            tabA.classList.add('active');
+          } else {
+            tabI.classList.add('active');
+          }
+        }
+        
+        // Force re-render
+        setTimeout(() => {
+          renderList();
+          console.log('Tab switched to:', state.currentTab);
+        }, 10);
+        
+        // Haptic feedback
+        if (navigator.vibrate) navigator.vibrate(30);
       }
       
-      function switchToInactive() {
-        console.log('Switching to Completed tab');
-        state.currentTab='inactive'; 
-        tabI?.classList.add('active'); 
-        tabA?.classList.remove('active'); 
-        renderList();
-        // Add haptic feedback on mobile
-        if (navigator.vibrate) navigator.vibrate(50);
-        // Force update the display
-        setTimeout(() => renderList(), 50);
-      }
-      
+      // Remove any existing event listeners by cloning elements
       if (tabA) {
-        // Remove any existing listeners
-        tabA.replaceWith(tabA.cloneNode(true));
-        const newTabA = document.getElementById('tab-active');
-        newTabA.addEventListener('click', switchToActive, { passive: false });
+        const newTabA = tabA.cloneNode(true);
+        tabA.parentNode.replaceChild(newTabA, tabA);
+        
+        // Add all event types for maximum compatibility
+        newTabA.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('Active tab clicked');
+          setActiveTab('active');
+        }, { passive: false });
+        
         newTabA.addEventListener('touchstart', (e) => {
           e.preventDefault();
           e.stopPropagation();
-          switchToActive();
+          console.log('Active tab touched');
+          setActiveTab('active');
+        }, { passive: false });
+        
+        newTabA.addEventListener('touchend', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
         }, { passive: false });
       }
       
       if (tabI) {
-        // Remove any existing listeners
-        tabI.replaceWith(tabI.cloneNode(true));
-        const newTabI = document.getElementById('tab-inactive');
-        newTabI.addEventListener('click', switchToInactive, { passive: false });
+        const newTabI = tabI.cloneNode(true);
+        tabI.parentNode.replaceChild(newTabI, tabI);
+        
+        // Add all event types for maximum compatibility
+        newTabI.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('Completed tab clicked');
+          setActiveTab('inactive');
+        }, { passive: false });
+        
         newTabI.addEventListener('touchstart', (e) => {
           e.preventDefault();
           e.stopPropagation();
-          switchToInactive();
+          console.log('Completed tab touched');
+          setActiveTab('inactive');
+        }, { passive: false });
+        
+        newTabI.addEventListener('touchend', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
         }, { passive: false });
       }
 
@@ -408,5 +439,38 @@ if (state.items.active.length === 0 && state.items.inactive.length === 0) {
   console.log('No tasks found, adding test data...');
   setTimeout(() => window.App.addTestData(), 1000);
 }
+
+// Add debug function for mobile testing
+window.App.debugTabs = function() {
+  console.log('=== TAB DEBUG INFO ===');
+  console.log('Current tab:', state.currentTab);
+  console.log('Active tasks:', state.items.active.length);
+  console.log('Completed tasks:', state.items.inactive.length);
+  
+  const tabA = document.getElementById('tab-active');
+  const tabI = document.getElementById('tab-inactive');
+  console.log('Active tab element:', tabA);
+  console.log('Active tab has active class:', tabA?.classList.contains('active'));
+  console.log('Completed tab element:', tabI);
+  console.log('Completed tab has active class:', tabI?.classList.contains('active'));
+  
+  const listEl = document.getElementById('list');
+  console.log('List element children count:', listEl?.children.length);
+  
+  // Show visual indicator
+  const indicator = document.createElement('div');
+  indicator.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:green;color:white;padding:20px;z-index:10000;border-radius:8px;font-size:16px;';
+  indicator.innerHTML = `
+    <div>Current Tab: ${state.currentTab}</div>
+    <div>Active: ${state.items.active.length} tasks</div>
+    <div>Completed: ${state.items.inactive.length} tasks</div>
+    <button onclick="this.parentElement.remove()">Close</button>
+  `;
+  document.body.appendChild(indicator);
+  
+  setTimeout(() => {
+    if (indicator.parentElement) indicator.remove();
+  }, 5000);
+};
 
 })();

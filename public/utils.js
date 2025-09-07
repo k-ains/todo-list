@@ -73,15 +73,25 @@ function initMobileMenu() {
   const sidebar = document.querySelector('.sidebar');
   const body = document.body;
   
-  if (!mobileMenuToggle || !sidebar) return;
+  if (!mobileMenuToggle || !sidebar) {
+    console.log('Mobile menu elements not found');
+    return;
+  }
   
-  // Create overlay element
-  const overlay = document.createElement('div');
-  overlay.className = 'sidebar-overlay';
-  body.appendChild(overlay);
+  console.log('Initializing mobile menu...');
+  
+  // Create overlay element if it doesn't exist
+  let overlay = document.querySelector('.sidebar-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.className = 'sidebar-overlay';
+    body.appendChild(overlay);
+  }
   
   function toggleMobileMenu() {
     const isOpen = sidebar.classList.contains('mobile-open');
+    
+    console.log('Toggling mobile menu, currently open:', isOpen);
     
     if (isOpen) {
       // Close menu
@@ -89,25 +99,37 @@ function initMobileMenu() {
       overlay.classList.remove('active');
       mobileMenuToggle.classList.remove('active');
       body.style.overflow = '';
+      console.log('Menu closed');
     } else {
       // Open menu
       sidebar.classList.add('mobile-open');
       overlay.classList.add('active');
       mobileMenuToggle.classList.add('active');
       body.style.overflow = 'hidden';
+      console.log('Menu opened');
     }
   }
   
   // Toggle menu on button click
-  mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+  mobileMenuToggle.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleMobileMenu();
+  });
   
   // Close menu when clicking overlay
-  overlay.addEventListener('click', toggleMobileMenu);
+  overlay.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (sidebar.classList.contains('mobile-open')) {
+      toggleMobileMenu();
+    }
+  });
   
   // Close menu when clicking sidebar links
   sidebar.addEventListener('click', (e) => {
     if (e.target.tagName === 'BUTTON' && sidebar.classList.contains('mobile-open')) {
-      toggleMobileMenu();
+      setTimeout(() => toggleMobileMenu(), 100); // Small delay for better UX
     }
   });
   
@@ -124,6 +146,8 @@ function initMobileMenu() {
       toggleMobileMenu();
     }
   });
+  
+  console.log('Mobile menu initialized successfully');
 }
 
 function initDarkMode() {

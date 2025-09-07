@@ -42,11 +42,12 @@ const fmtDate = (s) => s ? new Date(s + 'T00:00:00').toLocaleDateString(undefine
     for (const it of arr) {
       const node = document.importNode(tpl.content, true);
       const check = node.querySelector('.check');
-      const openBtn = node.querySelector('.open');
+      const menuBtn = node.querySelector('.menu-btn');
       const name = node.querySelector('.name');
       const desc = node.querySelector('.desc');
       const checkbox = node.querySelector('.task-checkbox');
       const taskElement = node.querySelector('.task');
+      const taskSelect = node.querySelector('.task-select');
 
       if (state.currentTab === 'inactive' || it.status === 'inactive') check.classList.add('done');
       name.textContent = it.item_name;
@@ -72,6 +73,12 @@ const fmtDate = (s) => s ? new Date(s + 'T00:00:00').toLocaleDateString(undefine
         updateBulkActions();
       });
 
+      // Handle menu button click - show bulk actions popup
+      menuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showBulkActionsPopup();
+      });
+
       // toggle status
       check.addEventListener('click', async () => {
         const to = (it.status === 'active') ? 'inactive' : 'active';
@@ -82,9 +89,6 @@ const fmtDate = (s) => s ? new Date(s + 'T00:00:00').toLocaleDateString(undefine
           await fetchItems();
         } catch (e) { toast('Failed to change status', 'error'); }
       });
-
-      // open drawer for full edit/schedule
-      openBtn.addEventListener('click', () => openDrawer(it));
 
       listEl.appendChild(node);
     }
@@ -283,11 +287,18 @@ async function saveFromDrawer(){
       // Logout
       document.getElementById('logout')?.addEventListener('click', logout);
 
-      // Bulk Actions
+      // Bulk Actions Popup
+      document.getElementById('close-bulk')?.addEventListener('click', hideBulkActionsPopup);
       document.getElementById('select-all')?.addEventListener('click', selectAllTasks);
       document.getElementById('deselect-all')?.addEventListener('click', deselectAllTasks);
       document.getElementById('bulk-delete')?.addEventListener('click', bulkDeleteTasks);
-      document.getElementById('bulk-complete')?.addEventListener('click', bulkCompleteTasks);
+      
+      // Close popup when clicking outside
+      document.getElementById('bulk-actions-popup')?.addEventListener('click', (e) => {
+        if (e.target.id === 'bulk-actions-popup') {
+          hideBulkActionsPopup();
+        }
+      });
 
       fetchItems().catch(err => { console.error('Initial fetch failed:', err); toast('Failed to load tasks','error'); });
     } catch (e) {
@@ -297,17 +308,44 @@ async function saveFromDrawer(){
   });
 
   // -------- Bulk Actions Functions --------
+  let isSelectionMode = false;
+  
+  function showBulkActionsPopup() {
+    const popup = document.getElementById('bulk-actions-popup');
+    popup.style.display = 'flex';
+    
+    // Enable selection mode
+    isSelectionMode = true;
+    document.querySelectorAll('.task').forEach(task => {
+      task.classList.add('selection-mode');
+      const taskSelect = task.querySelector('.task-select');
+      if (taskSelect) taskSelect.style.display = 'flex';
+    });
+    
+    updateBulkActions();
+  }
+  
+  function hideBulkActionsPopup() {
+    const popup = document.getElementById('bulk-actions-popup');
+    popup.style.display = 'none';
+    
+    // Disable selection mode and clear selections
+    isSelectionMode = false;
+    document.querySelectorAll('.task').forEach(task => {
+      task.classList.remove('selection-mode', 'selected');
+      const taskSelect = task.querySelector('.task-select');
+      if (taskSelect) taskSelect.style.display = 'none';
+      const checkbox = task.querySelector('.task-checkbox');
+      if (checkbox) checkbox.checked = false;
+    });
+  }
+  
   function updateBulkActions() {
-    const checkboxes = document.querySelectorAll('.task-checkbox');
     const checkedBoxes = document.querySelectorAll('.task-checkbox:checked');
-    const bulkActions = document.getElementById('bulk-actions');
     const selectedCount = document.getElementById('selected-count');
     
-    if (checkedBoxes.length > 0) {
-      bulkActions.style.display = 'block';
+    if (selectedCount) {
       selectedCount.textContent = `${checkedBoxes.length} selected`;
-    } else {
-      bulkActions.style.display = 'none';
     }
   }
   
@@ -335,7 +373,10 @@ async function saveFromDrawer(){
     const checkedBoxes = document.querySelectorAll('.task-checkbox:checked');
     const taskIds = Array.from(checkedBoxes).map(cb => cb.getAttribute('data-task-id'));
     
-    if (taskIds.length === 0) return;
+    if (taskIds.length === 0) {
+      toast('Please select tasks to delete', 'warning');
+      return;
+    }
     
     const confirmed = confirm(`Are you sure you want to delete ${taskIds.length} task(s)?`);
     if (!confirmed) return;
@@ -348,31 +389,10 @@ async function saveFromDrawer(){
       await Promise.all(promises);
       toast(`Deleted ${taskIds.length} task(s)`);
       await fetchItems();
-      updateBulkActions();
+      hideBulkActionsPopup(); // Close popup after deletion
     } catch (e) {
       console.error('Bulk delete failed:', e);
       toast('Failed to delete some tasks', 'error');
-    }
-  }
-  
-  async function bulkCompleteTasks() {
-    const checkedBoxes = document.querySelectorAll('.task-checkbox:checked');
-    const taskIds = Array.from(checkedBoxes).map(cb => cb.getAttribute('data-task-id'));
-    
-    if (taskIds.length === 0) return;
-    
-    try {
-      const promises = taskIds.map(id => 
-        apiSend('PUT', '/statusItem_action.php', { status: 'inactive', item_id: id })
-      );
-      
-      await Promise.all(promises);
-      toast(`Completed ${taskIds.length} task(s)`);
-      await fetchItems();
-      updateBulkActions();
-    } catch (e) {
-      console.error('Bulk complete failed:', e);
-      toast('Failed to complete some tasks', 'error');
     }
   }
 

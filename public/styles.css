@@ -1348,18 +1348,11 @@ body {
   }
   
   .hello {
-    font-size: 18px !important;
-    overflow: visible !important;
-    white-space: normal !important;
-    text-overflow: unset !important;
-    max-width: none !important;
-    line-height: 1.2 !important;
+    display: none !important;
   }
   
   .hello small {
-    font-size: 12px !important;
-    display: block !important;
-    margin-top: 2px !important;
+    display: none !important;
   }
   
   .userbox {
@@ -1950,10 +1943,7 @@ body {
 @media (max-width: 575.98px) {
   .metric.widget .num { font-size: 24px !important; }
   .task { padding: 12px !important; gap: 12px !important; }
-  .hello { font-size: 16px !important; }
-  .hello small { 
-    display: block !important; 
-    font-size: 11px !important;
-  }
+  .hello { display: none !important; }
+  .hello small { display: none !important; }
 }
 

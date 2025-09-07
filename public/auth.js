@@ -1,22 +1,27 @@
 // auth.js — sign in / sign up via Worker proxy
 (function(){
-  const { $, toast, apiSend, saveSession } = window.App;
+  const { $, toast, apiGet, apiSend, saveSession } = window.App;
 
   function switchTab(which){
     const s = document.getElementById('form-signin');
     const u = document.getElementById('form-signup');
     if (which === 'up') {
-      s.hidden = true;  u.hidden = false;
+      s.style.display = 'none';  
+      u.style.display = 'grid';
       document.getElementById('tab-signup').classList.add('active');
       document.getElementById('tab-signin').classList.remove('active');
     } else {
-      u.hidden = true;  s.hidden = false;
+      u.style.display = 'none';  
+      s.style.display = 'grid';
       document.getElementById('tab-signin').classList.add('active');
       document.getElementById('tab-signup').classList.remove('active');
     }
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+    // Set default state to show signin form
+    switchTab('in');
+    
     document.getElementById('tab-signin')?.addEventListener('click', ()=>switchTab('in'));
     document.getElementById('tab-signup')?.addEventListener('click', ()=>switchTab('up'));
 
@@ -26,7 +31,7 @@
       const email = e.target.email.value.trim();
       const password = e.target.password.value.trim();
       try {
-        const res = await window.App.apiGet('/signin_action.php', { email, password });
+        const res = await apiGet('/signin_action.php', { email, password });
         if (res.status !== 200) throw new Error(res.message || 'Sign in failed');
         saveSession(res.data);
         location.href = 'app.html';

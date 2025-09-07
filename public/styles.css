@@ -1852,3 +1852,86 @@ body {
   margin: -1px;
   overflow: hidden;
 }
+/* ===== Mobile layout fixes: make content scroll & avoid overlap ===== */
+@media (max-width: 768px) {
+  /* Let the page scroll */
+  html, body {
+    overflow: auto !important;
+    height: auto !important;
+  }
+
+  /* One column, natural height */
+  .app {
+    grid-template-columns: 1fr !important;
+    grid-template-areas:
+      "header"
+      "main" !important;
+    height: auto !important;
+  }
+
+  .main {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    grid-template-columns: 1fr !important; /* just in case */
+    padding: 16px 12px !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* Panels should grow naturally, not crop children */
+  .panel {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* Order: form + tasks first, counters after */
+  /* Adjust these IDs/classes to your markup if needed */
+  .panel { order: 1 !important; }       /* main card containing add form + tasks */
+  .sidecards, .metrics { order: 2 !important; width: 100% !important; }
+
+  /* Task list should not be clipped; let it expand */
+  .tasks {
+    overflow: visible !important;
+    max-height: none !important;
+    padding-right: 0 !important;
+  }
+
+  /* If you enabled a sticky bulk bar, turn it off on mobile */
+  .bulk-controls-bar {
+    position: static !important;
+    top: auto !important;
+    z-index: auto !important;
+    margin: 0 0 12px 0 !important;
+  }
+
+  /* Make the add button full-width under inputs for easier tapping */
+  .task-form {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    margin-bottom: 16px !important;
+  }
+
+  /* Sidebar stays hidden on phones (no overlaying) */
+  .sidebar {
+    display: none !important;
+    transform: translateX(-100%) !important;
+  }
+
+  /* Drawer: full width feel on phones */
+  .drawer {
+    width: 95vw !important;
+    max-width: 95vw !important;
+  }
+}
+
+/* Tiny phones: tighten spacing a bit more */
+@media (max-width: 575.98px) {
+  .metric.widget .num { font-size: 24px !important; }
+  .task { padding: 12px !important; gap: 12px !important; }
+  .hello { font-size: 16px !important; }
+  .hello small { display: none !important; }
+}
+

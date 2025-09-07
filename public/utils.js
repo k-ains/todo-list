@@ -60,4 +60,43 @@ async function apiSend(method, path, body, asForm = false){
 document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('logout');
   if (btn && typeof window.App?.logout === 'function') btn.addEventListener('click', window.App.logout);
+  
+  // Dark mode functionality
+  initDarkMode();
 });
+
+function initDarkMode() {
+  const themeToggle = document.getElementById('theme-toggle');
+  const body = document.body;
+  
+  // Check for saved theme preference or default to light mode
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  setTheme(savedTheme);
+  
+  // Add click event listener to toggle button
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = body.getAttribute('data-theme') || 'light';
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      setTheme(newTheme);
+    });
+  }
+}
+
+function setTheme(theme) {
+  const body = document.body;
+  const themeToggle = document.getElementById('theme-toggle');
+  
+  if (theme === 'dark') {
+    body.setAttribute('data-theme', 'dark');
+    if (themeToggle) themeToggle.textContent = '☀️';
+    if (themeToggle) themeToggle.title = 'Switch to light mode';
+  } else {
+    body.removeAttribute('data-theme');
+    if (themeToggle) themeToggle.textContent = '🌙';
+    if (themeToggle) themeToggle.title = 'Switch to dark mode';
+  }
+  
+  // Save theme preference
+  localStorage.setItem('theme', theme);
+}

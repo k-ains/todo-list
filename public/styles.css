@@ -22,8 +22,34 @@
   --radius-lg: 12px;
 }
 
+/* Dark mode variables */
+[data-theme="dark"] {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2d2d2d;
+  --bg-tertiary: #404040;
+  --text-primary: #e5e5e5;
+  --text-secondary: #a0a0a0;
+  --text-muted: #707070;
+  --border-light: #404040;
+  --border-medium: #555555;
+  --border-dark: #666666;
+  --accent: #ffffff;
+  --accent-light: #cccccc;
+  --success: #4caf50;
+  --danger: #f44336;
+  --warning: #ff9800;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.3);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.3);
+}
+
 * {
   box-sizing: border-box;
+}
+
+/* Smooth transition for theme changes */
+*, *::before, *::after {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 html, body {
@@ -192,6 +218,34 @@ body {
 .logout:hover {
   background: var(--bg-tertiary);
   border-color: var(--border-dark);
+}
+
+/* Dark mode toggle button */
+.theme-toggle {
+  all: unset;
+  cursor: pointer;
+  padding: 8px 12px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+}
+
+.theme-toggle:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-dark);
+  transform: scale(1.05);
+}
+
+.theme-toggle:active {
+  transform: scale(0.95);
 }
 
 /* ===== MAIN CONTENT ===== */

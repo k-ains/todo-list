@@ -834,6 +834,38 @@ body {
   font-style: italic;
 }
 
+/* See more/less functionality */
+.see-more-item {
+  margin-top: 8px !important;
+  border-bottom: none !important;
+}
+
+.see-more-btn {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 0;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.see-more-btn:hover {
+  color: var(--color-primary-hover);
+}
+
+/* Touch optimization for see more buttons */
+@media (pointer: coarse) {
+  .see-more-btn {
+    min-height: 32px;
+    padding: 8px 0;
+    font-size: 14px;
+    touch-action: manipulation;
+  }
+}
+
 /* ===== AUTH PAGE ===== */
 .auth {
   min-height: 100vh;

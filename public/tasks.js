@@ -37,6 +37,23 @@ const fmtDate = (s) => s ? new Date(s + 'T00:00:00').toLocaleDateString(undefine
     const arr = state.items[state.currentTab] || [];
     
     console.log(`Rendering ${state.currentTab} tab with ${arr.length} items`);
+    
+    // Add debug indicator
+    const debugEl = document.createElement('div');
+    debugEl.style.cssText = 'position:fixed;top:70px;right:10px;background:red;color:white;padding:5px;z-index:9999;border-radius:4px;font-size:12px;';
+    debugEl.textContent = `Tab: ${state.currentTab} (${arr.length} items)`;
+    debugEl.id = 'debug-tab-indicator';
+    
+    // Remove existing debug indicator
+    const existing = document.getElementById('debug-tab-indicator');
+    if (existing) existing.remove();
+    document.body.appendChild(debugEl);
+    
+    // Remove debug indicator after 3 seconds
+    setTimeout(() => {
+      const el = document.getElementById('debug-tab-indicator');
+      if (el) el.remove();
+    }, 3000);
 
     const tpl = document.getElementById('task-tpl');
     for (const it of arr) {
@@ -224,6 +241,8 @@ async function saveFromDrawer(){
         renderList();
         // Add haptic feedback on mobile
         if (navigator.vibrate) navigator.vibrate(50);
+        // Force update the display
+        setTimeout(() => renderList(), 50);
       }
       
       function switchToInactive() {
@@ -234,22 +253,32 @@ async function saveFromDrawer(){
         renderList();
         // Add haptic feedback on mobile
         if (navigator.vibrate) navigator.vibrate(50);
+        // Force update the display
+        setTimeout(() => renderList(), 50);
       }
       
       if (tabA) {
-        tabA.addEventListener('click', switchToActive);
-        tabA.addEventListener('touchend', (e) => {
+        // Remove any existing listeners
+        tabA.replaceWith(tabA.cloneNode(true));
+        const newTabA = document.getElementById('tab-active');
+        newTabA.addEventListener('click', switchToActive, { passive: false });
+        newTabA.addEventListener('touchstart', (e) => {
           e.preventDefault();
+          e.stopPropagation();
           switchToActive();
-        });
+        }, { passive: false });
       }
       
       if (tabI) {
-        tabI.addEventListener('click', switchToInactive);
-        tabI.addEventListener('touchend', (e) => {
+        // Remove any existing listeners
+        tabI.replaceWith(tabI.cloneNode(true));
+        const newTabI = document.getElementById('tab-inactive');
+        newTabI.addEventListener('click', switchToInactive, { passive: false });
+        newTabI.addEventListener('touchstart', (e) => {
           e.preventDefault();
+          e.stopPropagation();
           switchToInactive();
-        });
+        }, { passive: false });
       }
 
       // Drawer buttons
@@ -294,16 +323,90 @@ async function saveFromDrawer(){
   // helper to escape HTML
   const esc = (s)=>String(s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;', "'":'&#39;'}[m]));
 
-  // build UL items (top 3)
-  const asList = (arr) => {
+  // build UL items with see more functionality
+  const asList = (arr, type) => {
     if (!arr.length) return '<li class="empty">None</li>';
-    return arr.slice(0,3).map(x => `<li>${esc(x.item_name)}</li>`).join('');
+    
+    const maxDisplay = 3;
+    const items = arr.slice(0, maxDisplay).map(x => `<li>${esc(x.item_name)}</li>`).join('');
+    
+    if (arr.length > maxDisplay) {
+      const remaining = arr.length - maxDisplay;
+      const seeMoreButton = `<li class="see-more-item">
+        <button class="see-more-btn" onclick="window.App.expandList('${type}')">
+          +${remaining} more...
+        </button>
+      </li>`;
+      return items + seeMoreButton;
+    }
+    
+    return items;
   };
 
   const doneUl = document.getElementById('titles-done');
   const todoUl = document.getElementById('titles-todo');
-  if (doneUl) doneUl.innerHTML = asList(state.items.inactive);
-  if (todoUl) todoUl.innerHTML = asList(state.items.active);
+  if (doneUl) doneUl.innerHTML = asList(state.items.inactive, 'completed');
+  if (todoUl) todoUl.innerHTML = asList(state.items.active, 'active');
+}
+
+// Add expandList function to global App object
+window.App = window.App || {};
+window.App.expandList = function(type) {
+  console.log('Expanding list for:', type);
+  
+  const isCompleted = type === 'completed';
+  const arr = isCompleted ? state.items.inactive : state.items.active;
+  const targetUl = document.getElementById(isCompleted ? 'titles-done' : 'titles-todo');
+  
+  if (!targetUl || !arr.length) return;
+  
+  // Show all items with a collapse option
+  const esc = (s)=>String(s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;', "'":'&#39;'}[m]));
+  const allItems = arr.map(x => `<li>${esc(x.item_name)}</li>`).join('');
+  const collapseButton = `<li class="see-more-item">
+    <button class="see-more-btn" onclick="window.App.collapseList('${type}')">
+      Show less...
+    </button>
+  </li>`;
+  
+  targetUl.innerHTML = allItems + collapseButton;
+};
+
+window.App.collapseList = function(type) {
+  console.log('Collapsing list for:', type);
+  renderCounts(); // This will reset to the normal 3-item view
+};
+
+// Add some test data for demonstration
+window.App.addTestData = function() {
+  console.log('Adding test data...');
+  
+  // Add test active tasks
+  state.items.active = [
+    { item_id: 1, item_name: 'Complete mobile responsive design', item_description: 'Fix tab switching and add see more functionality', status: 'active' },
+    { item_id: 2, item_name: 'Review dark mode implementation', item_description: 'Test dark mode on all devices', status: 'active' },
+    { item_id: 3, item_name: 'Add touch optimizations', item_description: 'Improve mobile touch interactions', status: 'active' },
+    { item_id: 4, item_name: 'Test cross-browser compatibility', item_description: 'Check Safari, Chrome, Firefox', status: 'active' },
+    { item_id: 5, item_name: 'Optimize performance', item_description: 'Reduce bundle size and load time', status: 'active' }
+  ];
+  
+  // Add test completed tasks
+  state.items.inactive = [
+    { item_id: 6, item_name: 'Set up project structure', item_description: 'Create HTML, CSS, JS files', status: 'inactive' },
+    { item_id: 7, item_name: 'Implement basic layout', item_description: 'Add header, sidebar, main content', status: 'inactive' },
+    { item_id: 8, item_name: 'Add CSS Grid layout', item_description: 'Responsive grid system', status: 'inactive' },
+    { item_id: 9, item_name: 'Create color scheme', item_description: 'Define CSS custom properties', status: 'inactive' }
+  ];
+  
+  renderCounts();
+  renderList();
+  console.log('Test data added!');
+};
+
+// Auto-add test data if no tasks exist
+if (state.items.active.length === 0 && state.items.inactive.length === 0) {
+  console.log('No tasks found, adding test data...');
+  setTimeout(() => window.App.addTestData(), 1000);
 }
 
 })();

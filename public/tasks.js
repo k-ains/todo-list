@@ -53,7 +53,6 @@ const catEl = node.querySelector('.chip.cat');
 if (s.due) { dueEl.textContent = fmtDate(s.due); dueEl.hidden = false; } else { dueEl.hidden = true; }
 if (s.category) { catEl.textContent = s.category; catEl.hidden = false; } else { catEl.hidden = true; }
 
-
       // toggle status
       check.addEventListener('click', async () => {
         const to = (it.status === 'active') ? 'inactive' : 'active';
@@ -139,8 +138,6 @@ async function saveFromDrawer(){
 }
 
   function closeDrawer(){ const d=document.getElementById('drawer'); if(d) d.classList.remove('open'); state.current=null; }
-
-  
 
   async function deleteFromDrawer(){
     if(!state.current) return;
@@ -253,6 +250,4 @@ async function saveFromDrawer(){
   if (todoUl) todoUl.innerHTML = asList(state.items.active);
 }
 
-
-  
 })();

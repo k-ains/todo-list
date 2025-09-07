@@ -48,8 +48,6 @@ async function apiSend(method, path, body, asForm = false){
   
 }
 
-
-
   function saveSession(user){ localStorage.setItem('dcism_user', JSON.stringify(user)); }
   function loadSession(){ const raw = localStorage.getItem('dcism_user'); return raw ? JSON.parse(raw) : null; }
   function requireAuth(){ const u = loadSession(); if (!u || !u.id){ window.location.href = 'auth.html'; return null; } return u; }

@@ -6,69 +6,38 @@
   <title>Sign In | To‑Do App</title>
   <link rel="stylesheet" href="styles.css">
   <script src="utils.js"></script>
-<script src="auth.js"></script>
-
+  <script src="auth.js"></script>
 </head>
 <body>
   <div class="auth">
-    <div class="hero">
-      <div>
-        <h1>Welcome back 👋</h1>
-        <p class="hint">Sign in or create an account to start organizing your tasks.</p>
-      </div>
-    </div>
     <div class="panel">
+      <h1>Welcome</h1>
+      <p class="hint">Sign in to your account or create a new one to get started.</p>
+      
       <div class="tabs-auth">
         <button id="tab-signin" class="active">Sign In</button>
         <button id="tab-signup">Sign Up</button>
       </div>
 
       <form id="form-signin" class="grid">
-        <input class="input" type="email" name="email" placeholder="Email" required />
+        <input class="input" type="email" name="email" placeholder="Email address" required />
         <input class="input" type="password" name="password" placeholder="Password" required />
         <button class="btn" type="submit">Sign In</button>
-        <div id="signin-error" class="hint error"></div>
+        <div id="signin-error" class="error"></div>
       </form>
 
       <form id="form-signup" class="grid" style="display:none;">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div class="name-row">
           <input class="input" type="text" name="first_name" placeholder="First name" required />
           <input class="input" type="text" name="last_name" placeholder="Last name" required />
         </div>
-        <input class="input" type="email" name="email" placeholder="Email" required />
+        <input class="input" type="email" name="email" placeholder="Email address" required />
         <input class="input" type="password" name="password" placeholder="Password" minlength="6" required />
         <input class="input" type="password" name="confirm_password" placeholder="Confirm password" minlength="6" required />
-        <button class="btn" type="submit">Create account</button>
-        <div id="signup-error" class="hint error"></div>
+        <button class="btn" type="submit">Create Account</button>
+        <div id="signup-error" class="error"></div>
       </form>
     </div>
   </div>
-  <script>
-    const tabSignin = document.getElementById('tab-signin');
-    const tabSignup = document.getElementById('tab-signup');
-    const formSignin = document.getElementById('form-signin');
-    const formSignup = document.getElementById('form-signup');
-
-    function showSignin(){
-      tabSignin.classList.add('active');
-      tabSignup.classList.remove('active');
-      formSignin.style.display = 'grid';
-      formSignup.style.display = 'none';
-    }
-
-    function showSignup(){
-      tabSignup.classList.add('active');
-      tabSignin.classList.remove('active');
-      formSignin.style.display = 'none';
-      formSignup.style.display = 'grid';
-    }
-
-    tabSignin.addEventListener('click', showSignin);
-    tabSignup.addEventListener('click', showSignup);
-
-    // Set default state on load
-    showSignin();
-  </script>
-
 </body>
 </html>

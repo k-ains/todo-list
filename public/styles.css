@@ -602,9 +602,14 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
-  padding-bottom: 8px;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
   border-bottom: 1px solid var(--border-light);
+}
+
+.bulk-info span {
+  font-weight: 500;
+  margin-right: 32px;
 }
 
 .btn-exit {
@@ -701,14 +706,16 @@ body {
   }
   
   .bulk-info {
-    margin-bottom: 20px;
-    padding-bottom: 12px;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
     font-size: 14px;
   }
   
   .bulk-info span {
     font-weight: 500;
-    margin-right: 20px;
+    margin-right: 28px;
+    display: block;
+    margin-bottom: 12px;
   }
   
   .bulk-buttons {

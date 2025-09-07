@@ -602,7 +602,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 24px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-light);
 }
 
 .btn-exit {
@@ -623,7 +625,7 @@ body {
 
 .bulk-buttons {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
@@ -685,6 +687,41 @@ body {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* ===== MOBILE BULK CONTROLS STYLES ===== */
+@media (max-width: 768px) {
+  .bulk-controls-bar {
+    padding: 20px 16px;
+    margin: 0 -16px 16px -16px;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+  
+  .bulk-info {
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    font-size: 14px;
+  }
+  
+  .bulk-info span {
+    font-weight: 500;
+    margin-right: 20px;
+  }
+  
+  .bulk-buttons {
+    gap: 8px;
+    justify-content: center;
+  }
+  
+  .btn-pastel {
+    padding: 12px 16px;
+    font-size: 14px;
+    min-height: 44px;
+    flex: 1;
+    min-width: 80px;
   }
 }
 
@@ -1314,11 +1351,56 @@ body {
   .task-form {
     grid-template-columns: 1fr !important;
     gap: 12px !important;
+    margin-bottom: 20px !important;
+  }
+  
+  .task-form input {
+    min-height: 48px !important;
+    font-size: 16px !important; /* Prevents zoom on iOS */
+    padding: 12px 16px !important;
+    border-radius: 8px !important;
+    border: 2px solid var(--border-light) !important;
+    background: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+  }
+  
+  .task-form input:focus {
+    border-color: var(--color-primary) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+  }
+  
+  .task-form .btn {
+    min-height: 48px !important;
+    width: 100% !important;
+    font-size: 16px !important;
+    padding: 12px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
   }
   
   .tabs {
     width: 100% !important;
     justify-content: center !important;
+    display: flex !important;
+  }
+  
+  .tabs button {
+    padding: 12px 16px !important;
+    min-height: 48px !important;
+    font-size: 14px !important;
+    flex: 1 !important;
+    text-align: center !important;
+    /* Enhanced touch support */
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1) !important;
+  }
+  
+  .tabs button:active {
+    transform: scale(0.98) !important;
+    transition: transform 0.1s ease !important;
   }
   
   .metric.widget {

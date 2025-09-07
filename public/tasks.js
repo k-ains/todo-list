@@ -303,7 +303,6 @@ async function saveFromDrawer(){
 
   // -------- Bulk Actions Functions --------
   let isSelectionMode = false;
-  
   function toggleBulkSelectionMode() {
     if (isSelectionMode) {
       exitBulkSelectionMode();
@@ -311,31 +310,31 @@ async function saveFromDrawer(){
       enterBulkSelectionMode();
     }
   }
-  
+
   function enterBulkSelectionMode() {
     isSelectionMode = true;
-    
+
     // Show bulk controls bar
     const bulkControls = document.getElementById('bulk-controls');
     if (bulkControls) bulkControls.style.display = 'flex';
-    
+
     // Show checkboxes for all tasks
     document.querySelectorAll('.task').forEach(task => {
       task.classList.add('selection-mode');
       const taskSelect = task.querySelector('.task-select');
       if (taskSelect) taskSelect.style.display = 'flex';
     });
-    
+
     updateBulkActions();
   }
-  
+
   function exitBulkSelectionMode() {
     isSelectionMode = false;
-    
+
     // Hide bulk controls bar
     const bulkControls = document.getElementById('bulk-controls');
     if (bulkControls) bulkControls.style.display = 'none';
-    
+
     // Hide checkboxes, clear selections
     document.querySelectorAll('.task').forEach(task => {
       task.classList.remove('selection-mode', 'selected');
@@ -345,16 +344,64 @@ async function saveFromDrawer(){
       if (checkbox) checkbox.checked = false;
     });
   }
-  
+
   function updateBulkActions() {
     const checkedBoxes = document.querySelectorAll('.task-checkbox:checked');
     const selectedCount = document.getElementById('selected-count');
-    
+
     if (selectedCount) {
       selectedCount.textContent = `${checkedBoxes.length} selected`;
     }
+
+    const bulkCompleteBtn = document.getElementById('bulk-complete');
+    const bulkDeleteBtn = document.getElementById('bulk-delete');
+
+    // Only count active tasks for complete
+    const arr = state.items[state.currentTab] || [];
+    const activeSelected = Array.from(checkedBoxes)
+      .map(cb => cb.getAttribute('data-task-id'))
+      .filter(id => {
+        const task = arr.find(t => String(t.item_id) === String(id));
+        return task && task.status === 'active';
+      });
+
+    // Bulk Complete: disable if no active selected
+    if (bulkCompleteBtn) {
+      bulkCompleteBtn.disabled = activeSelected.length === 0;
+      if (bulkCompleteBtn.disabled) {
+        bulkCompleteBtn.style.backgroundColor = '#e0e0e0';
+        bulkCompleteBtn.style.color = '#888';
+        bulkCompleteBtn.style.border = '1px solid #ccc';
+        bulkCompleteBtn.style.cursor = 'not-allowed';
+        bulkCompleteBtn.classList.remove('pastel-hover');
+      } else {
+        bulkCompleteBtn.style.backgroundColor = '#b9f6ca'; // pastel green
+        bulkCompleteBtn.style.color = '#388e3c';
+        bulkCompleteBtn.style.border = '1px solid #43a047';
+        bulkCompleteBtn.style.cursor = 'pointer';
+        bulkCompleteBtn.classList.add('pastel-hover');
+      }
+    }
+
+    // Bulk Delete: disable if none selected
+    if (bulkDeleteBtn) {
+      bulkDeleteBtn.disabled = checkedBoxes.length === 0;
+      if (bulkDeleteBtn.disabled) {
+        bulkDeleteBtn.style.backgroundColor = '#e0e0e0';
+        bulkDeleteBtn.style.color = '#888';
+        bulkDeleteBtn.style.border = '1px solid #ccc';
+        bulkDeleteBtn.style.cursor = 'not-allowed';
+        bulkDeleteBtn.classList.remove('pastel-hover');
+      } else {
+        bulkDeleteBtn.style.backgroundColor = '#ffcdd2'; // pastel red
+        bulkDeleteBtn.style.color = '#b71c1c';
+        bulkDeleteBtn.style.border = '1px solid #d32f2f';
+        bulkDeleteBtn.style.cursor = 'pointer';
+        bulkDeleteBtn.classList.add('pastel-hover');
+      }
+    }
   }
-  
+
   function selectAllTasks() {
     const checkboxes = document.querySelectorAll('.task-checkbox');
     checkboxes.forEach(checkbox => {
@@ -364,7 +411,7 @@ async function saveFromDrawer(){
     });
     updateBulkActions();
   }
-  
+
   function deselectAllTasks() {
     const checkboxes = document.querySelectorAll('.task-checkbox');
     checkboxes.forEach(checkbox => {
@@ -374,63 +421,121 @@ async function saveFromDrawer(){
     });
     updateBulkActions();
   }
-  
+
+  // Bulk Complete: Only allow completing active tasks, disable if none selected
   async function bulkCompleteTasks() {
     const checkedBoxes = document.querySelectorAll('.task-checkbox:checked');
-    const taskIds = Array.from(checkedBoxes).map(cb => cb.getAttribute('data-task-id'));
-    
+    // Only allow active tasks to be completed
+    const taskIds = Array.from(checkedBoxes)
+      .map(cb => cb.getAttribute('data-task-id'))
+      .filter(id => {
+        const arr = state.items[state.currentTab] || [];
+        const task = arr.find(t => String(t.item_id) === String(id));
+        return task && task.status === 'active';
+      });
+
     if (taskIds.length === 0) {
-      toast('Please select tasks to complete', 'warning');
+      toast('Please select active tasks to complete', 'warning');
       return;
     }
-    
+
     const confirmed = confirm(`Are you sure you want to mark ${taskIds.length} task(s) as completed?`);
     if (!confirmed) return;
-    
+
     try {
-      const promises = taskIds.map(id => 
-        apiSend('PUT', '/statusItem_action.php', { 
-          status: 'inactive', 
-          item_id: id 
+      const promises = taskIds.map(id =>
+        apiSend('PUT', '/statusItem_action.php', {
+          status: 'inactive',
+          item_id: id
         })
       );
-      
+
       await Promise.all(promises);
       toast(`Completed ${taskIds.length} task(s)`);
       await fetchItems();
-      exitBulkSelectionMode(); // Exit bulk mode after completion
+      exitBulkSelectionMode();
     } catch (e) {
       console.error('Bulk complete failed:', e);
       toast('Failed to complete some tasks', 'error');
     }
   }
-  
+
+  // Bulk Delete: Disable if none selected
   async function bulkDeleteTasks() {
     const checkedBoxes = document.querySelectorAll('.task-checkbox:checked');
     const taskIds = Array.from(checkedBoxes).map(cb => cb.getAttribute('data-task-id'));
-    
+
     if (taskIds.length === 0) {
       toast('Please select tasks to delete', 'warning');
       return;
     }
-    
+
     const confirmed = confirm(`Are you sure you want to delete ${taskIds.length} task(s)?`);
     if (!confirmed) return;
-    
+
     try {
-      const promises = taskIds.map(id => 
+      const promises = taskIds.map(id =>
         apiSend('DELETE', '/deleteItem_action.php', { item_id: id })
       );
-      
+
       await Promise.all(promises);
       toast(`Deleted ${taskIds.length} task(s)`);
       await fetchItems();
-      exitBulkSelectionMode(); // Exit bulk mode after deletion
+      exitBulkSelectionMode();
     } catch (e) {
       console.error('Bulk delete failed:', e);
       toast('Failed to delete some tasks', 'error');
     }
   }
+
+  // Ensure bulk actions panel closes when switching tabs
+  // Patch switchToTab to always exit bulk selection mode
+  const originalSwitchToTab = window.switchToTab;
+  window.switchToTab = function(newTab) {
+    exitBulkSelectionMode(); // Close bulk actions panel when switching tabs
+    if (typeof originalSwitchToTab === 'function') {
+      originalSwitchToTab(newTab);
+    } else {
+      // fallback if not defined
+      state.currentTab = newTab;
+      document.querySelectorAll('.tabs button').forEach(btn => btn.classList.remove('active'));
+      if (newTab === 'active') {
+        document.getElementById('tab-active')?.classList.add('active');
+      } else {
+        document.getElementById('tab-inactive')?.classList.add('active');
+      }
+      renderList();
+    }
+  };
+
+  // Also exit bulk selection mode when switching tabs via local switchToTab in this file
+  // (in case window.switchToTab is not used)
+  // Patch the local switchToTab function
+  const localSwitchToTab = typeof switchToTab === 'function' ? switchToTab : null;
+  function patchedSwitchToTab(newTab) {
+    exitBulkSelectionMode();
+    if (localSwitchToTab) {
+      localSwitchToTab(newTab);
+    } else {
+      state.currentTab = newTab;
+      document.querySelectorAll('.tabs button').forEach(btn => btn.classList.remove('active'));
+      if (newTab === 'active') {
+        document.getElementById('tab-active')?.classList.add('active');
+      } else {
+        document.getElementById('tab-inactive')?.classList.add('active');
+      }
+      renderList();
+    }
+  }
+  // Replace tab event handlers to use patchedSwitchToTab
+  document.getElementById('tab-active')?.addEventListener('click', e => {
+    e.preventDefault();
+    patchedSwitchToTab('active');
+  });
+  document.getElementById('tab-inactive')?.addEventListener('click', e => {
+    e.preventDefault();
+    patchedSwitchToTab('inactive');
+  });
 
   // -------- Counts (big counters + badges) --------
  function renderCounts(){

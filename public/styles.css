@@ -121,10 +121,10 @@ body {
 }
 
 .nav .tag {
-  margin-left: auto;
+  margin-left: right;
   margin-right: -4px; /* Move closer to the edge */
   background: var(--border-medium);
-  color: var(--text-muted);
+  color: var(--text-primary);
   border-radius: 10px;
   padding: 1px 6px;
   font-size: 11px;

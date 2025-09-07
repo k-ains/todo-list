@@ -63,7 +63,68 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Dark mode functionality
   initDarkMode();
+  
+  // Mobile menu functionality
+  initMobileMenu();
 });
+
+function initMobileMenu() {
+  const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+  const sidebar = document.querySelector('.sidebar');
+  const body = document.body;
+  
+  if (!mobileMenuToggle || !sidebar) return;
+  
+  // Create overlay element
+  const overlay = document.createElement('div');
+  overlay.className = 'sidebar-overlay';
+  body.appendChild(overlay);
+  
+  function toggleMobileMenu() {
+    const isOpen = sidebar.classList.contains('mobile-open');
+    
+    if (isOpen) {
+      // Close menu
+      sidebar.classList.remove('mobile-open');
+      overlay.classList.remove('active');
+      mobileMenuToggle.classList.remove('active');
+      body.style.overflow = '';
+    } else {
+      // Open menu
+      sidebar.classList.add('mobile-open');
+      overlay.classList.add('active');
+      mobileMenuToggle.classList.add('active');
+      body.style.overflow = 'hidden';
+    }
+  }
+  
+  // Toggle menu on button click
+  mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+  
+  // Close menu when clicking overlay
+  overlay.addEventListener('click', toggleMobileMenu);
+  
+  // Close menu when clicking sidebar links
+  sidebar.addEventListener('click', (e) => {
+    if (e.target.tagName === 'BUTTON' && sidebar.classList.contains('mobile-open')) {
+      toggleMobileMenu();
+    }
+  });
+  
+  // Close menu on window resize if it gets too large
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 992 && sidebar.classList.contains('mobile-open')) {
+      toggleMobileMenu();
+    }
+  });
+  
+  // Handle escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && sidebar.classList.contains('mobile-open')) {
+      toggleMobileMenu();
+    }
+  });
+}
 
 function initDarkMode() {
   const themeToggle = document.getElementById('theme-toggle');

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Todoism — Task Management</title>
   <link rel="stylesheet" href="styles.css" />
 
@@ -12,6 +12,9 @@
 </head>
 <body>
   <div id="app" class="app">
+    <!-- Mobile Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    
     <!-- Sidebar Navigation -->
     <aside class="sidebar">
       <div class="brand">
@@ -31,7 +34,12 @@
 
     <!-- Header -->
     <header class="header">
-      <div>
+      <div class="header-left">
+        <button id="mobile-menu-toggle" class="mobile-menu-toggle" aria-label="Toggle navigation">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
         <div class="hello">Good day, <span id="hello-name">User</span> ✨<small id="hello-time"></small></div>
       </div>
       <div class="userbox">

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Responsive Test - Todoism</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="utils.js" defer></script>
+    <style>
+        .responsive-info {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: var(--bg-tertiary);
+            padding: 8px 12px;
+            border-radius: var(--radius);
+            font-size: 12px;
+            z-index: 9999;
+            border: 1px solid var(--border-medium);
+        }
+    </style>
+</head>
+<body>
+    <div class="responsive-info" id="screen-info">
+        Screen: <span id="screen-width"></span>px
+    </div>
+    
+    <div id="app" class="app">
+        <!-- Mobile Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo">☐</div>
+                <strong>Todoism</strong>
+            </div>
+            <nav>
+                <ul class="nav">
+                    <li><button class="active" id="nav-inbox">
+                        <span>📥</span> Inbox
+                        <span class="tag" id="inbox-count">5</span>
+                    </button></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <button id="mobile-menu-toggle" class="mobile-menu-toggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <div class="hello">Good day, <span id="hello-name">Test User</span> ✨<small id="hello-time">Responsive Test</small></div>
+            </div>
+            <div class="userbox">
+                <div class="pill" id="user-email">test@example.com</div>
+                <button id="theme-toggle" class="theme-toggle" title="Toggle dark mode">🌙</button>
+                <button id="logout" class="logout">Sign out</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <section class="panel">
+                <div class="section-title">
+                    <h3>Add Task</h3>
+                    <div class="tabs">
+                        <button class="active" id="tab-active">Active</button>
+                        <button id="tab-inactive">Completed</button>
+                    </div>
+                </div>
+
+                <form id="form-add" class="task-form">
+                    <input class="input" id="new-name" placeholder="Task name" required />
+                    <input class="input" id="new-desc" placeholder="Description" />
+                    <input class="input" id="new-due" type="date" aria-label="Due date" />
+                    <button class="btn" type="submit">Add task</button>
+                </form>
+
+                <div id="list" class="tasks" aria-live="polite">
+                    <!-- Sample tasks for testing -->
+                    <article class="task">
+                        <div class="check" role="button" title="Mark as complete">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <div class="task-body">
+                            <div class="top">
+                                <div class="name">Sample Task 1</div>
+                                <div class="chips">
+                                    <span class="chip due">Due Today</span>
+                                    <span class="chip cat">Work</span>
+                                </div>
+                            </div>
+                            <div class="desc hint">This is a sample task description</div>
+                        </div>
+                        <div class="actions">
+                            <button class="icon-btn open" title="Edit task">⋯</button>
+                        </div>
+                    </article>
+                    
+                    <article class="task">
+                        <div class="check" role="button" title="Mark as complete">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <div class="task-body">
+                            <div class="top">
+                                <div class="name">Sample Task 2</div>
+                                <div class="chips">
+                                    <span class="chip cat">Personal</span>
+                                </div>
+                            </div>
+                            <div class="desc hint">Another sample task for testing responsive design</div>
+                        </div>
+                        <div class="actions">
+                            <button class="icon-btn open" title="Edit task">⋯</button>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <!-- Sidebar with metrics -->
+            <section class="sidecards">
+                <div class="metrics">
+                    <div class="metric widget">
+                        <div id="stat-todo" class="num">2</div>
+                        <div class="titles">
+                            <div class="label">Active Tasks</div>
+                            <ul id="titles-todo" class="list">
+                                <li>Sample Task 1</li>
+                                <li>Sample Task 2</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="metric widget">
+                        <div id="stat-done" class="num">3</div>
+                        <div class="titles">
+                            <div class="label">Completed</div>
+                            <ul id="titles-done" class="list">
+                                <li>Completed Task 1</li>
+                                <li>Completed Task 2</li>
+                                <li>Completed Task 3</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Display current screen width for testing
+        function updateScreenInfo() {
+            document.getElementById('screen-width').textContent = window.innerWidth;
+        }
+        
+        updateScreenInfo();
+        window.addEventListener('resize', updateScreenInfo);
+        
+        // Mock logout function for testing
+        window.App = window.App || {};
+        window.App.logout = () => alert('Logout clicked!');
+    </script>
+</body>
+</html>
